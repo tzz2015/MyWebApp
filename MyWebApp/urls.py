@@ -15,20 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from user_manage import views
+from user_manage import user_urls
 from .middleware.ExceptionMiddleware import page_error, page_not_found, permission_denied
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.hello),
-    path('login', views.user_login),
-    path('logout', views.user_logout),
+]
+# 一个模块一个urlpatterns 各自管理
+urlpatterns.extend(user_urls.urlpatterns)
 
-]
-not_need_login = [
-    views.hello,
-    views.user_login,
-]
+not_need_login = []
+
+# 一个模块一个not_need_login 各自管理
+not_need_login.extend(user_urls.not_need_login)
 
 handler403 = permission_denied
 handler404 = page_not_found
