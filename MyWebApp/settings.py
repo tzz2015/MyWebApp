@@ -11,10 +11,14 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import logging
+import time
+
+import django.utils.log
+import logging.handlers
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
@@ -122,3 +126,80 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'user_manage.UserInfo'
+
+# log_path是存放日志的路径
+log_path = os.path.join(BASE_DIR, 'logs')
+# 如果不存在这个logs文件夹，就自动创建一个
+if not os.path.exists(log_path):
+    os.mkdir(log_path)
+# 日记相关配置
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        # 日志格式
+        'standard': {
+            'format': '[%(asctime)s] [%(filename)s:%(lineno)d] [%(module)s:%(funcName)s] '
+                      '[%(levelname)s]- %(message)s'},
+        'simple': {  # 简单格式
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    # 过滤
+    'filters': {
+    },
+    # 定义具体处理日志的方式
+    'handlers': {
+        # 默认记录所有日志
+        'default': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(log_path, 'all-{}.log'.format(time.strftime('%Y-%m-%d'))),
+            'maxBytes': 1024 * 1024 * 5,  # 文件大小
+            'backupCount': 5,  # 备份数
+            'formatter': 'standard',  # 输出格式
+            'encoding': 'utf-8',  # 设置默认编码，否则打印出来汉字乱码
+        },
+        # 输出错误日志
+        'error': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(log_path, 'error-{}.log'.format(time.strftime('%Y-%m-%d'))),
+            'maxBytes': 1024 * 1024 * 5,  # 文件大小
+            'backupCount': 5,  # 备份数
+            'formatter': 'standard',  # 输出格式
+            'encoding': 'utf-8',  # 设置默认编码
+        },
+        # 控制台输出
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard'
+        },
+        # 输出info日志
+        'info': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(log_path, 'info-{}.log'.format(time.strftime('%Y-%m-%d'))),
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5,
+            'formatter': 'standard',
+            'encoding': 'utf-8',  # 设置默认编码
+        },
+    },
+    # 配置用哪几种 handlers 来处理日志
+    'loggers': {
+        # 类型 为 django 处理所有类型的日志， 默认调用
+        'django': {
+            'handlers': ['default', 'console'],
+            'level': 'INFO',
+            'propagate': False
+        },
+        # log 调用时需要当作参数传入
+        'log': {
+            'handlers': ['error', 'info', 'console', 'default'],
+            'level': 'INFO',
+            'propagate': True
+        },
+    }
+}
