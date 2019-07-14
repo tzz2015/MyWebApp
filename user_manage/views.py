@@ -1,6 +1,7 @@
 # Create your views here.
 from MyWebApp.json_utils import result_handler
 from django.contrib.auth import authenticate, login, logout
+from .models import UserInfo
 
 
 def hello(request):
@@ -21,3 +22,8 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return result_handler('退出登录成功')
+
+
+def user_all(request):
+    user_list = UserInfo.objects.all()
+    return result_handler(user_list)

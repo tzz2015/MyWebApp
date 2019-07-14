@@ -6,7 +6,7 @@ from django.forms.models import model_to_dict
 from django.db import models
 
 
-# 统一返回格式
+# 返回统一的json格式
 def result_handler(data, msg='ok', code=200):
     data = format_data(data)
     model = BaseModel(data=data, msg=msg, code=code)
@@ -14,6 +14,7 @@ def result_handler(data, msg='ok', code=200):
 
 
 # 将QuerySet转换成list 或者将model转换成dict
+# 解决无法正常格式化问题
 def format_data(data):
     # 将model转换成dict
     if isinstance(data, models.Model):
@@ -21,10 +22,10 @@ def format_data(data):
     if type(data) is QuerySet:
         back_data = []
         for item in data:
-            if isinstance(item, dict):
-                back_data.append(item)
-            else:
+            if isinstance(item, models.Model):
                 back_data.append(model_to_dict(item))
+            else:
+                back_data.append(item)
         if back_data.__len__() > 0:
             data = back_data
 
@@ -49,6 +50,7 @@ class BaseModel(object):
         return r
 
 
+# 将datetime转换成字符串
 class DateEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime.datetime):
