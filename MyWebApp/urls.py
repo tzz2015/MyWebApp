@@ -31,4 +31,5 @@ not_need_login.extend(user_urls.not_need_login)
 
 handler403 = permission_denied
 handler404 = page_not_found
+handler405 = permission_denied
 handler500 = page_error

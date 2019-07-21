@@ -29,4 +29,4 @@ def page_error(request):
 
 def permission_denied(request, exception):
     logger.error('没有权限：{}'.format(exception))
-    return result_handler(None, msg='没有权限', code=400)
+    return result_handler(None, msg='没有权限', code=404)

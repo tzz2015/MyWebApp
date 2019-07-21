@@ -5,6 +5,7 @@
 from django.utils.deprecation import MiddlewareMixin
 from ..urls import not_need_login
 from ..json_utils import result_handler
+import MyWebApp.middleware.ExceptionMiddleware as exp
 
 
 class LoginMiddleware(MiddlewareMixin):
@@ -24,6 +25,8 @@ class LoginMiddleware(MiddlewareMixin):
 
     def process_response(self, request, response):
         """视图函数调用之后，response返回浏览器之前"""
+        if response is not None and response.status_code == 405:
+            response.content = exp.permission_denied()
         print('返回数据：%s' % str(response.content, encoding="utf8").encode('utf-8').decode('unicode_escape'))
 
         return response  # 一般会返回响应。
