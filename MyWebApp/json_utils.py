@@ -4,13 +4,18 @@ import json
 import datetime
 from django.forms.models import model_to_dict
 from django.db import models
+import logging
+
+logger = logging.getLogger('log')
 
 
 # 返回统一的json格式
 def result_handler(data, msg='ok', code=200):
     data = format_data(data)
     model = BaseModel(data=data, msg=msg, code=code)
-    return HttpResponse(json.dumps(model.to_dict(), cls=DateEncoder), content_type="application/json", )
+    result_json = HttpResponse(json.dumps(model.to_dict(), cls=DateEncoder), content_type="application/json", )
+    logger.info(result_json)
+    return result_json
 
 
 # 统一字抛错误
