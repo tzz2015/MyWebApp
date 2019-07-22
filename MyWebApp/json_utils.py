@@ -13,6 +13,11 @@ def result_handler(data, msg='ok', code=200):
     return HttpResponse(json.dumps(model.to_dict(), cls=DateEncoder), content_type="application/json", )
 
 
+# 统一字抛错误
+def error_handler(msg):
+    return result_handler(data=None, msg=msg, code=201)
+
+
 # 将QuerySet转换成list 或者将model转换成dict
 # 解决无法正常格式化问题
 def format_data(data):

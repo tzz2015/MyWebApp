@@ -5,6 +5,10 @@ import user_manage.handler.user_handler as user_handler
 urlpatterns = [
     path('', views.hello),
     path('login', user_handler.login),
+    path('user_info', user_handler.get_user),
+    path('logout', user_handler.logout),
+    path('change_password', user_handler.change_password),
+
 ]
 not_need_login = [
     views.hello,
