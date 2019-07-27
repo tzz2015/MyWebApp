@@ -36,8 +36,7 @@ def format_data(data):
                 back_data.append(model_to_dict(item))
             else:
                 back_data.append(item)
-        if back_data.__len__() > 0:
-            data = back_data
+        data = back_data
 
     return data
 

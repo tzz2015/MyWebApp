@@ -8,5 +8,6 @@ class UserInfo(AbstractUser):
     """
     用户信息
     """
-    nid = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     telephone = models.CharField(max_length=11, null=True, unique=True)
+    user_type = models.IntegerField(default=0, null=False, help_text='用户角色 0：超级管理员，1：管理员 2：普通用户')

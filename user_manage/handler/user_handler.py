@@ -25,3 +25,13 @@ def logout(request):
 # 修改密码
 def change_password(request):
     return user.change_password(request)
+
+
+# 获取用户列表
+def user_list(request):
+    return user.get_user_list(request)
+
+
+# 创建或者更新用户
+def create_or_update_user(request):
+    return user.create_or_update_user(request)

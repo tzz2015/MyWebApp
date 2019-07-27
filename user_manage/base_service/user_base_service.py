@@ -1,7 +1,10 @@
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+
 from MyWebApp.json_utils import result_handler, error_handler
-from django.contrib.auth import authenticate, get_user, logout, login, update_session_auth_hash
+from django.contrib.auth import authenticate, get_user, logout, login
+from MyWebApp.utils import page_list, PageInfo
 from ..models import UserInfo
-from django.core.cache import cache
+
 """
 用户基础逻辑
 """
@@ -30,15 +33,39 @@ def user_logout(request):
     return result_handler('退出登录成功')
 
 
-def user_all(request):
-    user_list = UserInfo.objects.all()
-    return result_handler(user_list)
+# 分页用户
+def page_user(request, page, page_size, filters=None):
+    exclude = {'is_superuser': True}
+    user_page = page_list(page, page_size, UserInfo, filter=filters, exclude=exclude)
+    user_list = user_page.get('list')
+    for user in user_list:
+        if user.get('username') == request.user.username:
+            user_list.remove(user)
+    return result_handler(user_page)
 
 
 # 修改密码
 def user_change_password(auth_user, new_password):
-    if auth_user is None:
-        return error_handler('旧密码不匹配')
     auth_user.set_password(new_password)
     auth_user.save()
-    return result_handler(auth_user)
+    return auth_user
+
+
+# 创建用户
+def create_sys_user(username, password, user_type=2):
+    find_user = UserInfo.objects.filter(username=username)
+    if find_user.__len__() > 0:
+        return error_handler('用户名已经存在')
+    user = UserInfo.objects.create_user(username=username, email=None, user_type=user_type)
+    if user is None:
+        return error_handler('创建用户失败')
+    user_change_password(user, password)
+    return result_handler(user)
+
+
+# 更新用户
+def update_sys_user(user_id, **kwargs):
+    rows = UserInfo.objects.filter(id=user_id).update(**kwargs)
+    if rows == 0:
+        return error_handler('更新失败')
+    return result_handler('更新成功')
