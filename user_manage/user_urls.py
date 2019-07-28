@@ -9,11 +9,11 @@ urlpatterns = [
     path('logout', user_handler.logout),
     path('change_password', user_handler.change_password),
     path('user_list', user_handler.user_list),
-    path('create_update_user', user_handler.create_or_update_user)
-
+    path('create_update_user', user_handler.create_or_update_user),
+    path('active', user_handler.active),
+    path('delete_user', user_handler.delete_user),
 ]
 not_need_login = [
     views.hello,
     user_handler.login,
-
 ]

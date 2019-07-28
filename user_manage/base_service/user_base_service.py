@@ -1,8 +1,6 @@
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-
 from MyWebApp.json_utils import result_handler, error_handler
 from django.contrib.auth import authenticate, get_user, logout, login
-from MyWebApp.utils import page_list, PageInfo
+from MyWebApp.utils import page_list
 from ..models import UserInfo
 
 """
@@ -35,12 +33,12 @@ def user_logout(request):
 
 # 分页用户
 def page_user(request, page, page_size, filters=None):
-    exclude = {'is_superuser': True}
-    user_page = page_list(page, page_size, UserInfo, filter=filters, exclude=exclude)
-    user_list = user_page.get('list')
-    for user in user_list:
-        if user.get('username') == request.user.username:
-            user_list.remove(user)
+    # exclude = {'is_superuser': True}
+    user_page = page_list(page, page_size, UserInfo, filter=filters)
+    # user_list = user_page.get('list')
+    # for user in user_list:
+    #     if user.get('username') == request.user.username:
+    #         user_list.remove(user)
     return result_handler(user_page)
 
 
@@ -69,3 +67,11 @@ def update_sys_user(user_id, **kwargs):
     if rows == 0:
         return error_handler('更新失败')
     return result_handler('更新成功')
+
+
+# 删除用户
+def delete_user(user_id):
+    rows = UserInfo.objects.filter(id=user_id).delete()
+    if rows == 0:
+        return error_handler('删除失败')
+    return result_handler('删除成功')

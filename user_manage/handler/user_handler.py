@@ -35,3 +35,13 @@ def user_list(request):
 # 创建或者更新用户
 def create_or_update_user(request):
     return user.create_or_update_user(request)
+
+
+# 修改用户激活状态
+def active(request):
+    return user.update_user_active(request)
+
+
+# 删除用户
+def delete_user(request):
+    return user.delete_user(request)

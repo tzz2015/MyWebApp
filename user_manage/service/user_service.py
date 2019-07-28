@@ -52,7 +52,7 @@ def change_password(request):
 
 # 获取系统用户列表
 def get_user_list(request):
-    page = request.POST.get('page', default=1)
+    page = request.POST.get('page', default=-1)
     page_size = request.POST.get('page_size', default=10)
     filters = {}
     username = request.POST.get('username')
@@ -67,9 +67,9 @@ def get_user_list(request):
     return user_base_service.page_user(request, page, page_size, filters=filters)
 
 
-# 获取系统用户列表
+# 创建或者更新用户
 def create_or_update_user(request):
-    user_id = int(request.POST.get('id', default=1))
+    user_id = int(request.POST.get('id', default=-1))
     username = request.POST.get('username', default='刘宇飞')
     password = request.POST.get('password', default='lyf')
     user_type = int(request.POST.get('user_type', default=0))
@@ -85,3 +85,23 @@ def create_or_update_user(request):
         return user_base_service.update_sys_user(user_id, username=username, user_type=user_type)
     else:
         return user_base_service.create_sys_user(username, password, user_type)
+
+
+# 更新用户激活状态
+def update_user_active(request):
+    user_id = int(request.POST.get('id', default=-1))
+    curr_user = UserInfo.objects.filter(id=user_id)
+    if curr_user.__len__() == 0:
+        return error_handler('用户不存在')
+    return user_base_service.update_sys_user(user_id, is_active=not curr_user[0].is_active)
+
+
+# 删除用户
+def delete_user(request):
+    user_id = int(request.POST.get('id', default=-1))
+    curr_user = UserInfo.objects.filter(id=user_id)
+    if user_id == 1:
+        return error_handler('无法删除超级管理员')
+    if curr_user.__len__() == 0:
+        return error_handler('用户不存在')
+    return user_base_service.delete_user(user_id)
