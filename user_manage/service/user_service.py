@@ -70,9 +70,9 @@ def get_user_list(request):
 # 创建或者更新用户
 def create_or_update_user(request):
     user_id = int(request.POST.get('id', default=-1))
-    username = request.POST.get('username', default='刘宇飞')
-    password = request.POST.get('password', default='lyf')
-    user_type = int(request.POST.get('user_type', default=0))
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    user_type = int(request.POST.get('user_type', default=2))
     if user_id > 0:
         curr_user = UserInfo.objects.filter(id=user_id)
         if curr_user is None:
