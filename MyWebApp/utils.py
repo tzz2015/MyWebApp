@@ -34,3 +34,12 @@ class PageInfo(object):
             'total': self.total,
             'list': format_data(self.rs_list)
         }
+
+
+"""
+判断是否为空
+"""
+
+
+def is_empty(s):
+    return s is None or s == ''

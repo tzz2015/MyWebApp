@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from user_manage import user_urls
+from menu_manage import menu_urls
 from .middleware.ExceptionMiddleware import page_error, page_not_found, permission_denied
 
 urlpatterns = [
@@ -23,11 +24,13 @@ urlpatterns = [
 ]
 # 一个模块一个urlpatterns 各自管理
 urlpatterns.extend(user_urls.urlpatterns)
+urlpatterns.extend(menu_urls.urlpatterns)
 
 not_need_login = []
 
 # 一个模块一个not_need_login 各自管理
 not_need_login.extend(user_urls.not_need_login)
+not_need_login.extend(menu_urls.not_need_login)
 
 handler403 = permission_denied
 handler404 = page_not_found
