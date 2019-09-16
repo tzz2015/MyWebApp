@@ -11,11 +11,11 @@ from django.forms.models import model_to_dict
 # 查询类别列表
 def get_menu_list():
     menu_list = MenuManage.objects.all().order_by('menu_type_id')
+    rest = []
     for menu in menu_list:
-        print(type(menu))
-        res = model_to_dict(menu.menu_type)
-        print(res)
-    return result_handler(menu_list)
+        rest.append(menu.__str__())
+    print(rest)
+    return result_handler(rest)
 
 
 # 新增或者更新菜单类型
