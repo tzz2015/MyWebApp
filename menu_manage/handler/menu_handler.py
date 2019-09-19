@@ -12,6 +12,11 @@ def get_menu_list(request):
     return menu.get_menu_list()
 
 
+# 根据菜单类型查询菜单列表
+def get_menu_list_by_type(request):
+    return menu.get_menu_list_by_type()
+
+
 # 新增菜单列表或者修改
 @require_POST
 def add_or_edit_menu(request):

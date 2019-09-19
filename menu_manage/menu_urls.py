@@ -7,6 +7,7 @@ urlpatterns = [
     path('create_menu_type', menu_type.create_menu_type),
     path('delete_menu_type', menu_type.delete_menu_type),
     path('menu_list', menu.get_menu_list),
+    path('menu_list_by_type', menu.get_menu_list_by_type),
     path('add_or_edit_menu', menu.add_or_edit_menu),
     path('delete_menu', menu.delete_menu),
 ]
