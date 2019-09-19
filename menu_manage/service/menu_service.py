@@ -1,7 +1,6 @@
 from MyWebApp.json_utils import result_handler, error_handler, format_data
 from menu_manage.models import MenuManage, MenuManageType
 from MyWebApp.utils import is_empty
-from django.forms.models import model_to_dict
 
 """
 菜单操作类型 对应表名称：menu_manage_menu_manage

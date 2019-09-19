@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
 
@@ -32,3 +33,9 @@ class MenuManage(models.Model):
             'menu_path': self.menu_path,
             'remark': self.remark,
         }
+
+
+# 用户菜单权限表
+class UserMenuPermission(models.Model):
+    user = models.ForeignKey(get_user_model(), null=False, on_delete=models.CASCADE, help_text='用户id')
+    menu = models.ForeignKey('MenuManage', null=False, on_delete=models.CASCADE, help_text='菜单id')
