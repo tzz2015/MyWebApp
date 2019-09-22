@@ -75,3 +75,7 @@ def delete_user(user_id):
     if rows == 0:
         return error_handler('删除失败')
     return result_handler('删除成功')
+
+
+def find_user_by_id(user_id):
+    return UserInfo.objects.filter(id=user_id)
