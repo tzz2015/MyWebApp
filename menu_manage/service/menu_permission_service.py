@@ -16,20 +16,24 @@ def get_menu_permission_list(request):
 
 # 非管理员用户菜单列表
 def get_not_supper_menu_list(user):
-    permission_list = UserMenuPermission.objects.filter(user_id=user.id)
+    return result_handler(get_menu_list_by_user(user.id))
+
+
+# 根据用户获取用户拥有的菜单
+def get_menu_list_by_user(user_id):
+    permission_list = UserMenuPermission.objects.filter(user_id=user_id)
     menu_ids = []
     for permission in permission_list:
         menu_ids.append(permission.menu.id)
 
     menu_type = list(MenuManageType.objects.all().values())
+    menu = []
     for item in menu_type:
         menu_list = MenuManage.objects.filter(menu_type_id=item['id'], pk__in=menu_ids).all()
-        if menu_list.__len__() == 0:
-            menu_type.remove(item)
-        else:
+        if menu_list.__len__() != 0:
             item['child_List'] = format_data(menu_list)
-
-    return result_handler(menu_type)
+            menu.append(item)
+    return menu
 
 
 # 删除用户的权限菜单

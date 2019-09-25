@@ -22,7 +22,7 @@ def get_menu_list_by_type():
     menu_type = MenuManageType.objects.all().values()
     for item in menu_type:
         menu_list = MenuManage.objects.filter(menu_type_id=item['id']).all()
-        item['child_List'] = format_data(menu_list)
+        item['menu_list'] = format_data(menu_list)
     return result_handler(data=menu_type)
 
 

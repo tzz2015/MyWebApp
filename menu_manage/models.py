@@ -30,6 +30,7 @@ class MenuManage(models.Model):
             'id': self.id,
             'menu_name': self.menu_name,
             'menu_type': self.menu_type.__str__(),
+            'menu_type_id': self.menu_type.id,
             'menu_path': self.menu_path,
             'remark': self.remark,
         }

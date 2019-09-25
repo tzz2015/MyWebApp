@@ -1,4 +1,4 @@
-from MyWebApp.json_utils import result_handler, error_handler
+from MyWebApp.json_utils import result_handler, error_handler, format_data
 from django.contrib.auth import authenticate, get_user, logout, login
 from MyWebApp.utils import page_list
 from ..models import UserInfo
@@ -35,10 +35,14 @@ def user_logout(request):
 def page_user(request, page, page_size, filters=None):
     # exclude = {'is_superuser': True}
     user_page = page_list(page, page_size, UserInfo, filter=filters)
-    # user_list = user_page.get('list')
-    # for user in user_list:
-    #     if user.get('username') == request.user.username:
-    #         user_list.remove(user)
+    user_list = user_page.get('list')
+    for user in user_list:
+        if user['user_type'] != 0:
+            from menu_manage.service.menu_permission_service import get_menu_list_by_user
+            menu_list = get_menu_list_by_user(user['id'])
+            user['menu_list'] = menu_list
+        else:
+            user['menu_list'] = []
     return result_handler(user_page)
 
 
