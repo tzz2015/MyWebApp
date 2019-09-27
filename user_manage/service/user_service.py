@@ -1,5 +1,7 @@
 from django.contrib.auth import logout
 from MyWebApp.json_utils import result_handler, error_handler
+from MyWebApp.utils import is_empty
+from menu_manage.handler.menu_permission_handler import add_batch_menu_permission
 from ..base_service import user_base_service
 from ..models import UserInfo
 
@@ -80,8 +82,10 @@ def create_or_update_user(request):
         name_user = UserInfo.objects.filter(username=username)
         if name_user.__len__() > 0 and name_user[0].id != user_id:
             return error_handler('用户名已经存在')
-        if password is not None:
+        if not is_empty(password):
             user_base_service.user_change_password(curr_user[0], password)
+        # 更新权限
+        add_batch_menu_permission(request)
         return user_base_service.update_sys_user(user_id, username=username, user_type=user_type)
     else:
         return user_base_service.create_sys_user(username, password, user_type)

@@ -15,3 +15,7 @@ def delete_menu_permission(request):
 def add_menu_permission(request):
     return permissionServer.add_menu_permission(request)
 
+
+# 批量给用户添加菜单权限
+def add_batch_menu_permission(request):
+    return permissionServer.add_batch_menu_permission(request)

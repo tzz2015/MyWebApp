@@ -1,8 +1,12 @@
+import logging
+
 from MyWebApp.json_utils import result_handler, error_handler, format_data
 from MyWebApp.utils import is_empty
 from menu_manage.models import UserMenuPermission, MenuManage, MenuManageType
 from menu_manage.service.menu_service import get_menu_list_by_type
 from user_manage.base_service.user_base_service import get_user_info, find_user_by_id
+
+logger = logging.getLogger('menu_permission_handler')
 
 
 # 查询用户菜单权限列表
@@ -31,7 +35,7 @@ def get_menu_list_by_user(user_id):
     for item in menu_type:
         menu_list = MenuManage.objects.filter(menu_type_id=item['id'], pk__in=menu_ids).all()
         if menu_list.__len__() != 0:
-            item['child_List'] = format_data(menu_list)
+            item['menu_list'] = format_data(menu_list)
             menu.append(item)
     return menu
 
@@ -63,3 +67,41 @@ def add_menu_permission(request):
         return error_handler('权限已经存在')
     UserMenuPermission.objects.create(menu_id=menu_id, user_id=user_id)
     return result_handler(None)
+
+
+# 批量给用户添加权限
+def add_batch_menu_permission(request):
+    user_id = int(request.POST.get('id', default=-1))
+    menu_ids = request.POST.get('menuIds')
+    if menu_ids is None:
+        return error_handler('menuIds必须存在')
+    menu_ids = menu_ids.split(',')
+    user = find_user_by_id(user_id)
+    if user.__len__() == 0:
+        return error_handler('用户不存在')
+    add_menu_ids = []
+    for menu_id in menu_ids:
+        result_id = add_permission(user_id, menu_id)
+        if result_id > 0:
+            add_menu_ids.append(result_id)
+    per_list = UserMenuPermission.objects.filter(user_id=user_id)
+    for permission in per_list:
+        if str(permission.menu_id) not in menu_ids:
+            UserMenuPermission.objects.filter(user_id=user_id, menu_id=permission.menu_id).delete()
+    return result_handler(add_menu_ids)
+
+
+# 添加菜单权限
+def add_permission(user_id, menu_id):
+    # 判断菜单是否存在
+    menu = MenuManage.objects.filter(id=menu_id).all()
+    if menu.__len__() == 0:
+        logger.error('菜单不存在')
+        return -1
+    exit_permission = UserMenuPermission.objects.filter(menu_id=menu_id, user_id=user_id)
+    if exit_permission.__len__() != 0:
+        logger.error('权限已经存在')
+        return -1
+    UserMenuPermission.objects.create(menu_id=menu_id, user_id=user_id)
+    logger.error('权限添加成功')
+    return int(menu_id)

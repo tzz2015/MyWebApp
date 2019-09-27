@@ -14,6 +14,7 @@ urlpatterns = [
     path('permission_menu_list', menu_permission.get_user_menu_permission_list),
     path('delete_permission_menu', menu_permission.delete_menu_permission),
     path('add_permission_menu', menu_permission.add_menu_permission),
+    path('add_batch_menu_permission', menu_permission.add_batch_menu_permission),
 
 ]
 not_need_login = [
