@@ -1,6 +1,7 @@
 from django.urls import path
 import user_manage.views as views
 import user_manage.handler.user_handler as user_handler
+import user_manage.handler.alum_handle as alum_handle
 
 urlpatterns = [
     path('', views.hello),
@@ -12,6 +13,11 @@ urlpatterns = [
     path('create_update_user', user_handler.create_or_update_user),
     path('active', user_handler.active),
     path('delete_user', user_handler.delete_user),
+    path('alum_list', alum_handle.alum_list),
+    path('edit_alum', alum_handle.edit_alum),
+    path('alum_order_list', alum_handle.alum_order_list),
+    path('update_alum_order', alum_handle.update_alum_order),
+
 ]
 not_need_login = [
     views.hello,
