@@ -62,3 +62,9 @@ def update_alum_order(request):
     pay_status = int(request.POST.get('pay_status', default=0))
     PayModel.objects.filter(alum_id=key).update(pay_status=pay_status)
     return result_handler(key)
+
+
+# 获取订单详情
+def get_alum_order(request):
+    key = request.POST.get('key')
+    return result_handler(PayModel.objects.filter(alum_id=key).values())

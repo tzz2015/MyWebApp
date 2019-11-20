@@ -17,6 +17,7 @@ urlpatterns = [
     path('edit_alum', alum_handle.edit_alum),
     path('alum_order_list', alum_handle.alum_order_list),
     path('update_alum_order', alum_handle.update_alum_order),
+    path('alum_order_detail', alum_handle.get_alum_order),
 
 ]
 not_need_login = [
