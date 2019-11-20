@@ -10,7 +10,12 @@ from user_manage.models import AlumModel, PayModel
 
 # 获取相册列表
 def get_alum_list(request):
-    menu_list = PayModel.objects.all().order_by('createTime')
+    user = get_user_info(request)
+    # 管理员获取全部列表
+    if user.user_type == UserType.SUPER.value or user.user_type == UserType.MANAGE.value:
+        menu_list = PayModel.objects.all().order_by('createTime')
+    else:
+        menu_list = PayModel.objects.filter(user_id=user.id).all().order_by('createTime')
     return result_handler(menu_list)
 
 

@@ -2,9 +2,11 @@ from django.urls import path
 import user_manage.views as views
 import user_manage.handler.user_handler as user_handler
 import user_manage.handler.alum_handle as alum_handle
+from user_manage.handler.upload_tenxun_handler import upload_wx_file
 
 urlpatterns = [
     path('', views.hello),
+    path('upload_file', upload_wx_file),
     path('login', user_handler.login),
     path('user_info', user_handler.get_user),
     path('logout', user_handler.logout),
