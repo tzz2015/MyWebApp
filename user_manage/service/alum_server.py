@@ -2,27 +2,45 @@ import hashlib
 import time
 
 from MyWebApp.enums import UserType, PayType
-from MyWebApp.json_utils import result_handler, error_handler
-from user_manage.base_service.user_base_service import get_user_info
+from MyWebApp.json_utils import result_handler, error_handler, format_data
+from MyWebApp.utils import page_list
+from user_manage.base_service.user_base_service import get_user_info, find_user_by_id
 
-from user_manage.models import AlumModel, PayModel
+from user_manage.models import AlumModel, PayModel, UserInfo
 
 
 # 获取相册列表
 def get_alum_list(request):
     user = get_user_info(request)
-    # 管理员获取全部列表
-    if user.user_type == UserType.SUPER.value or user.user_type == UserType.MANAGE.value:
-        menu_list = PayModel.objects.all().order_by('createTime')
-    else:
-        menu_list = PayModel.objects.filter(user_id=user.id).all().order_by('createTime')
-    return result_handler(menu_list)
+    page = request.POST.get('page', default=-1)
+    page_size = request.POST.get('page_size', default=10)
+    filters = {}
+    username = request.POST.get('username')
+    if username is not None and username != '':
+        filters['user__username__contains'] = username
+    if user.user_type == UserType.OTHER.value:
+        filters['user_id'] = user.id
+    search_list = page_list(page, page_size, AlumModel, filter=filters)
+    for item in search_list['list']:
+        item['user'] = find_user_by_id(item['user']).values()[0]
+        pay_info = PayModel.objects.filter(alum_id=item['key']).values()
+        item['alum'] = pay_info[0] if pay_info.__len__() > 0 else {}
+
+    return result_handler(search_list)
 
 
 # 获取相册列表
 def get_alum_order_list(request):
-    menu_list = AlumModel.objects.all().order_by('createTime')
-    return result_handler(menu_list)
+    page = request.POST.get('page', default=-1)
+    page_size = request.POST.get('page_size', default=10)
+    filters = {}
+    username = request.POST.get('username')
+    if username is not None and username != '':
+        filters['user__username__contains'] = username
+    search_list = page_list(page, page_size, PayModel, filter=filters)
+    for item in search_list['list']:
+        item['user'] = find_user_by_id(item['user']).values()[0]
+    return result_handler(search_list)
 
 
 # 获取相册列表

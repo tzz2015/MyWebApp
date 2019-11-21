@@ -17,7 +17,8 @@ class AlumModel(models.Model):
     """
     相册信息
     """
-    key = models.CharField(max_length=255, primary_key=True, help_text='唯一id')
+    id = models.AutoField(primary_key=True)
+    key = models.CharField(max_length=255, unique=True, help_text='唯一id')
     user = models.ForeignKey('UserInfo', null=False, on_delete=models.CASCADE, help_text='用户id')
     bg_url = models.CharField(max_length=255, null=False, help_text='背景图片地址')
     music_url = models.CharField(max_length=255, null=True, help_text='音乐地址')

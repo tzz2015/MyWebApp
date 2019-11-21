@@ -6,13 +6,13 @@ from MyWebApp.json_utils import result_handler, format_data
 # 获取分页数据
 def page_list(page, page_size, class_name, filter=None, exclude=None):
     if filter is not None and exclude is not None:
-        class_list = class_name.objects.all().filter(**filter).exclude(**exclude)
+        class_list = class_name.objects.all().filter(**filter).exclude(**exclude).order_by('-id')
     elif filter is not None:
-        class_list = class_name.objects.all().filter(**filter)
+        class_list = class_name.objects.all().filter(**filter).order_by('-id')
     elif exclude is not None:
-        class_list = class_name.objects.all().exclude(**exclude)
+        class_list = class_name.objects.all().exclude(**exclude).order_by('-id')
     else:
-        class_list = class_name.objects.all()
+        class_list = class_name.objects.all().order_by('-id')
 
     paginator = Paginator(class_list, page_size)
     try:
@@ -20,7 +20,7 @@ def page_list(page, page_size, class_name, filter=None, exclude=None):
     except PageNotAnInteger:
         contacts = paginator.page(1)
     except EmptyPage:
-        contacts = paginator.page(paginator.num_pages)
+        return PageInfo(class_list.__len__(), []).to_dict()
     return PageInfo(class_list.__len__(), contacts.object_list).to_dict()
 
 

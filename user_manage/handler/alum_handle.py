@@ -10,9 +10,9 @@ def alum_list(request):
     return service.get_alum_list(request)
 
 
-# 获取相册分页列表
+# 获取相册订单分页列表
 def alum_order_list(request):
-    return service.get_alum_list(request)
+    return service.get_alum_order_list(request)
 
 
 # 新增或者编辑相册
