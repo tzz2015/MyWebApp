@@ -10,5 +10,6 @@ class UserType(Enum):
 
 class PayType(Enum):
     # 支付状态
-    PAY_ED = 1
     NO_PAY = 0
+    PAY_ED = 1
+    AUDIT = 2

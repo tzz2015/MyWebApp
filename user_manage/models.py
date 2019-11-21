@@ -22,6 +22,7 @@ class AlumModel(models.Model):
     bg_url = models.CharField(max_length=255, null=False, help_text='背景图片地址')
     music_url = models.CharField(max_length=255, null=True, help_text='音乐地址')
     image_urls = models.TextField(null=False, help_text='图片链接，用逗号分隔')
+    email = models.EmailField(null=True, help_text='通知邮箱')
     createTime = models.DateTimeField(auto_now=True, help_text='时间')
 
 
