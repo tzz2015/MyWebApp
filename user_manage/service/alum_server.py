@@ -65,6 +65,15 @@ def create_order(user, key):
 def update_alum_order(request):
     key = request.POST.get('key')
     pay_status = int(request.POST.get('pay_status', default=0))
+    user = get_user_info(request)
+
+    if (
+            pay_status == PayType.NO_PAY.value or pay_status == PayType.PAY_ED.value) and user.user_type != UserType.SUPER.value:
+        return error_handler('只有管理员才有权限修改')
+    if pay_status == PayType.AUDIT.value:
+        pay = PayModel.objects.filter(alum_id=key)
+        if pay.__len__() > 0 and user.id != pay[0].user_id:
+            return error_handler('你无权提交')
     PayModel.objects.filter(alum_id=key).update(pay_status=pay_status)
     return result_handler(key)
 

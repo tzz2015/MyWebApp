@@ -1,6 +1,8 @@
+from MyWebApp.enums import UserType
 from MyWebApp.json_utils import result_handler, error_handler, format_data
 from django.contrib.auth import authenticate, get_user, logout, login
 from MyWebApp.utils import page_list
+from menu_manage.service.base_menu_server import add_permission_by_name
 from ..models import UserInfo
 
 """
@@ -62,6 +64,8 @@ def create_sys_user(username, password, user_type=2):
     if user is None:
         return error_handler('创建用户失败')
     user_change_password(user, password)
+    # 添加默认的菜单权限
+    add_default_menu_permission(user)
     return result_handler(user)
 
 
@@ -81,5 +85,15 @@ def delete_user(user_id):
     return result_handler('删除成功')
 
 
+# 根据ID查找用户
 def find_user_by_id(user_id):
     return UserInfo.objects.filter(id=user_id)
+
+
+# 增加默认的菜单权限
+def add_default_menu_permission(user):
+    if user.user_type == UserType.SUPER.value:
+        return -1
+    menu_name_list = ['相册列表']
+    for item in menu_name_list:
+        add_permission_by_name(user.id, item)

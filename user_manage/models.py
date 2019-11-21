@@ -32,5 +32,5 @@ class PayModel(models.Model):
     """
     alum = models.ForeignKey('AlumModel', null=False, on_delete=models.CASCADE, help_text='用户id')
     user = models.ForeignKey('UserInfo', null=False, on_delete=models.CASCADE, help_text='用户id')
-    pay_status = models.IntegerField(default=0, help_text='支付状态')
+    pay_status = models.IntegerField(default=0, help_text='支付状态 0：未支付 1：已支付 2：审核中')
     createTime = models.DateTimeField(auto_now=True, help_text='时间')

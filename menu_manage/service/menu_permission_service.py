@@ -1,8 +1,8 @@
 import logging
 
 from MyWebApp.json_utils import result_handler, error_handler, format_data
-from MyWebApp.utils import is_empty
 from menu_manage.models import UserMenuPermission, MenuManage, MenuManageType
+from menu_manage.service.base_menu_server import add_permission
 from menu_manage.service.menu_service import get_menu_list_by_type
 from user_manage.base_service.user_base_service import get_user_info, find_user_by_id
 
@@ -91,17 +91,4 @@ def add_batch_menu_permission(request):
     return result_handler(add_menu_ids)
 
 
-# 添加菜单权限
-def add_permission(user_id, menu_id):
-    # 判断菜单是否存在
-    menu = MenuManage.objects.filter(id=menu_id).all()
-    if menu.__len__() == 0:
-        logger.error('菜单不存在')
-        return -1
-    exit_permission = UserMenuPermission.objects.filter(menu_id=menu_id, user_id=user_id)
-    if exit_permission.__len__() != 0:
-        logger.error('权限已经存在')
-        return -1
-    UserMenuPermission.objects.create(menu_id=menu_id, user_id=user_id)
-    logger.error('权限添加成功')
-    return int(menu_id)
+

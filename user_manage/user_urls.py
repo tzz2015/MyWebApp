@@ -25,4 +25,5 @@ urlpatterns = [
 not_need_login = [
     views.hello,
     user_handler.login,
+    user_handler.create_or_update_user,
 ]
