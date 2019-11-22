@@ -34,4 +34,5 @@ class PayModel(models.Model):
     alum = models.ForeignKey('AlumModel', null=False, on_delete=models.CASCADE, help_text='用户id')
     user = models.ForeignKey('UserInfo', null=False, on_delete=models.CASCADE, help_text='用户id')
     pay_status = models.IntegerField(default=0, help_text='支付状态 0：未支付 1：已支付 2：审核中')
+    wachat_name = models.CharField(max_length=20, null=True, help_text="微信付款账号")
     createTime = models.DateTimeField(auto_now=True, help_text='时间')
