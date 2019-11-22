@@ -23,7 +23,7 @@ def get_alum_list(request):
     search_list = page_list(page, page_size, AlumModel, filter=filters)
     for item in search_list['list']:
         item['user'] = find_user_by_id(item['user']).values()[0]
-        pay_info = PayModel.objects.filter(alum_id=item['key']).values()
+        pay_info = PayModel.objects.filter(alum__key=item['key']).values()
         item['payInfo'] = pay_info[0] if pay_info.__len__() > 0 else {}
 
     return result_handler(search_list)
@@ -60,7 +60,9 @@ def edit_alum(request):
         key = hashlib.md5(str(int(round(time.time() * 1000))).encode(encoding='UTF-8')).hexdigest()
         AlumModel.objects.create(user_id=user.id, bg_url=bg_url, music_url=music_url, image_urls=image_urls,
                                  key=key)
-        create_order(user, key)
+        alum = AlumModel.objects.get(user_id=user.id, bg_url=bg_url, music_url=music_url, image_urls=image_urls,
+                                     key=key)
+        create_order(user, alum)
     else:
         AlumModel.objects.filter(key=key).update(user_id=user.id, bg_url=bg_url, music_url=music_url,
                                                  image_urls=image_urls)
@@ -69,12 +71,12 @@ def edit_alum(request):
 
 
 # 创建订单
-def create_order(user, key):
+def create_order(user, alum):
     pay_status = PayType.NO_PAY.value
     try:
         if user.user_type == UserType.SUPER.value or user.user_type == UserType.MANAGE.value:
             pay_status = PayType.PAY_ED.value
-        PayModel.objects.create(alum_id=key, pay_status=pay_status, user_id=user.id)
+        PayModel.objects.create(alum=alum, pay_status=pay_status, user_id=user.id)
     except Exception as e:
         print(e)
 
@@ -90,17 +92,23 @@ def update_alum_order(request):
             pay_status == PayType.NO_PAY.value or pay_status == PayType.PAY_ED.value) and user.user_type != UserType.SUPER.value:
         return error_handler('只有管理员才有权限修改')
     if pay_status == PayType.AUDIT.value:
-        pay = PayModel.objects.filter(alum_id=key)
+        pay = PayModel.objects.filter(alum__key=key)
         if pay.__len__() > 0 and user.id != pay[0].user_id:
             return error_handler('你无权提交')
     if wachat_name is None or wachat_name == '':
-        PayModel.objects.filter(alum_id=key).update(pay_status=pay_status)
+        PayModel.objects.filter(alum__key=key).update(pay_status=pay_status)
     else:
-        PayModel.objects.filter(alum_id=key).update(pay_status=pay_status, wachat_name=wachat_name)
+        PayModel.objects.filter(alum__key=key).update(pay_status=pay_status, wachat_name=wachat_name)
     return result_handler(key)
 
 
 # 获取订单详情
 def get_alum_order(request):
-    key = request.POST.get('key')
-    return result_handler(PayModel.objects.filter(alum_id=key).values())
+    try:
+        key = request.POST.get('key')
+        data = PayModel.objects.filter(alum__key=key).all().values()
+        if data.__len__() > 0:
+            return result_handler(data[0])
+    except Exception as e:
+        print(e)
+    return result_handler([])
