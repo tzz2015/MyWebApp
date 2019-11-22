@@ -1,12 +1,17 @@
 # -*- coding=utf-8
+import datetime
 import re
 import time
 import os
+from io import BytesIO
+
 from qcloud_cos import CosConfig
 from qcloud_cos import CosS3Client
 import requests
 import sys
 import logging
+
+from MyWebApp import settings
 from MyWebApp.json_utils import result_handler, error_handler, format_data
 
 # 腾讯云COSV5Python SDK, 目前可以支持Python2.6与Python2.7以及Python3.x
@@ -48,7 +53,7 @@ def upload_file(paths):
     try:
         file_dir = time.strftime("%Y-%m-%d")
         (path, name) = os.path.split(paths)
-        file_name = "wx-mini/" + str(file_dir) + "/" + name
+        file_name = "WebApp/" + str(file_dir) + "/" + name
         response = client.upload_file(
             Bucket=bucket,
             LocalFilePath=paths,
@@ -58,19 +63,19 @@ def upload_file(paths):
             EnableMD5=False
         )
         print(response)
-        print(host + file_name)
+        return host + file_name
     except Exception as e:
         print(e)
+        return ''
 
 
 # 网络图片上传到腾讯云
 def upload_net_file(request):
     try:
-        file_dir = time.strftime("%Y-%m-%d")
         url = request.POST.get('url')
         file_dir = time.strftime("%Y-%m-%d")
         (path, name) = os.path.split(url)
-        file_name = "wx-mini/" + str(file_dir) + "/" + name
+        file_name = "WebApp/" + str(file_dir) + "/" + name
         # 网络流将以 Transfer-Encoding:chunked 的方式传输到 COS
         stream = requests.get(url)
         response = client.put_object(
@@ -85,20 +90,23 @@ def upload_net_file(request):
 
 
 # 按字节流上传到腾讯云 微信小程序以字节流方式上传
-def upload_wx_file(request):
+def upload_tenxun_file(request):
     try:
         file_dir = time.strftime("%Y-%m-%d")
         file = request.FILES.get("file")
         file_name = "WebApp/" + str(file_dir) + "/" + os.path.splitext(file.name)[0][-30:] + \
                     os.path.splitext(file.name)[1]
+        buf = BytesIO()
         for chunk in file.chunks():
-            response = client.put_object(
-                Bucket=bucket,
-                Body=chunk,
-                Key=file_name,
-                StorageClass='STANDARD',
-                EnableMD5=False
-            )
+            buf.write(chunk)
+        buf.seek(0)
+        response = client.put_object(
+            Bucket=bucket,
+            Body=buf,
+            Key=file_name,
+            StorageClass='STANDARD',
+            EnableMD5=False
+        )
         return result_handler(host + file_name)
     except Exception as e:
         print(e)
@@ -106,5 +114,5 @@ def upload_wx_file(request):
 
 
 if __name__ == '__main__':
-    url = '../../media/upload/WechatIMG120.jpeg'
+    url = '../../media/upload/.mp3'
     upload_file(url)
