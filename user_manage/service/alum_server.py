@@ -1,9 +1,11 @@
 import hashlib
 import time
 
+from django.db.models import Q
+
 from MyWebApp.enums import UserType, PayType
 from MyWebApp.json_utils import result_handler, error_handler, format_data
-from MyWebApp.utils import page_list
+from MyWebApp.utils import page_list, data_paginator
 from user_manage.base_service.user_base_service import get_user_info, find_user_by_id
 
 from user_manage.models import AlumModel, PayModel, UserInfo
@@ -29,17 +31,21 @@ def get_alum_list(request):
     return result_handler(search_list)
 
 
-# 获取相册列表
+# 获取相册订单列表
 def get_alum_order_list(request):
     page = request.POST.get('page', default=-1)
     page_size = request.POST.get('page_size', default=10)
-    filters = {}
     username = request.POST.get('username')
+
     if username is not None and username != '':
-        filters['user__username__contains'] = username
-    search_list = page_list(page, page_size, PayModel, filter=filters)
+        data_list = PayModel.objects.all().filter(
+            Q(wachat_name__contains=username) | Q(user__username__contains=username))
+    else:
+        data_list = PayModel.objects.all()
+    search_list = data_paginator(data_list, page, page_size)
     for item in search_list['list']:
         item['user'] = find_user_by_id(item['user']).values()[0]
+        item['alum'] = format_data(AlumModel.objects.get(id=item['alum']))
     return result_handler(search_list)
 
 

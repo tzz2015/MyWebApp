@@ -14,6 +14,11 @@ def page_list(page, page_size, class_name, filter=None, exclude=None):
     else:
         class_list = class_name.objects.all().order_by('-id')
 
+    return data_paginator(class_list, page, page_size)
+
+
+# 拆开分页
+def data_paginator(class_list, page, page_size):
     paginator = Paginator(class_list, page_size)
     try:
         contacts = paginator.page(page)
