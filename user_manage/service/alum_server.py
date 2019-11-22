@@ -24,7 +24,7 @@ def get_alum_list(request):
     for item in search_list['list']:
         item['user'] = find_user_by_id(item['user']).values()[0]
         pay_info = PayModel.objects.filter(alum_id=item['key']).values()
-        item['alum'] = pay_info[0] if pay_info.__len__() > 0 else {}
+        item['payInfo'] = pay_info[0] if pay_info.__len__() > 0 else {}
 
     return result_handler(search_list)
 
@@ -85,8 +85,7 @@ def update_alum_order(request):
     pay_status = int(request.POST.get('pay_status', default=0))
     user = get_user_info(request)
 
-    if (
-            pay_status == PayType.NO_PAY.value or pay_status == PayType.PAY_ED.value) and user.user_type != UserType.SUPER.value:
+    if (pay_status == PayType.NO_PAY.value or pay_status == PayType.PAY_ED.value) and user.user_type != UserType.SUPER.value:
         return error_handler('只有管理员才有权限修改')
     if pay_status == PayType.AUDIT.value:
         pay = PayModel.objects.filter(alum_id=key)
