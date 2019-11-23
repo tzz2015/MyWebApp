@@ -39,9 +39,10 @@ def get_alum_order_list(request):
 
     if username is not None and username != '':
         data_list = PayModel.objects.all().filter(
-            Q(wachat_name__contains=username) | Q(user__username__contains=username) | Q(alum__key__contains=username))
+            Q(wachat_name__contains=username) | Q(user__username__contains=username) | Q(
+                alum__key__contains=username)).order_by('-id')
     else:
-        data_list = PayModel.objects.all()
+        data_list = PayModel.objects.all().order_by('-id')
     search_list = data_paginator(data_list, page, page_size)
     for item in search_list['list']:
         item['user'] = find_user_by_id(item['user']).values()[0]
