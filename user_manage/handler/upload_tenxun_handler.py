@@ -95,8 +95,8 @@ def upload_tenxun_file(request):
         file_dir = time.strftime("%Y-%m-%d")
         t = time.time()
         file = request.FILES.get("file")
-        file_name = "WebApp/" + str(file_dir) + "/" + str(int(t)) + os.path.splitext(file.name)[0][-30:] + \
-                    os.path.splitext(file.name)[1]
+        last_name = str(int(t)) + os.path.splitext(file.name)[0][-10:].replace(',', '')
+        file_name = "WebApp/" + str(file_dir) + "/" + last_name + os.path.splitext(file.name)[1]
         buf = BytesIO()
         for chunk in file.chunks():
             buf.write(chunk)
