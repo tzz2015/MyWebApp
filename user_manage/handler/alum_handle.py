@@ -28,3 +28,8 @@ def update_alum_order(request):
 # 根据key获取订单详情
 def get_alum_order(request):
     return service.get_alum_order(request)
+
+
+# 根据key获取相册详情
+def get_alum_detail(request):
+    return service.get_alum_detail(request)

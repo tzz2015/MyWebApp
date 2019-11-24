@@ -20,10 +20,14 @@ urlpatterns = [
     path('alum_order_list', alum_handle.alum_order_list),
     path('update_alum_order', alum_handle.update_alum_order),
     path('alum_order_detail', alum_handle.get_alum_order),
+    path('alum_detail', alum_handle.get_alum_detail),
 
 ]
 not_need_login = [
     views.hello,
     user_handler.login,
     user_handler.create_or_update_user,
+    alum_handle.get_alum_order,
+    alum_handle.get_alum_detail,
+
 ]

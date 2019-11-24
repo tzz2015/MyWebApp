@@ -119,3 +119,15 @@ def get_alum_order(request):
     except Exception as e:
         print(e)
     return result_handler([])
+
+
+# 获取订单详情
+def get_alum_detail(request):
+    try:
+        key = request.POST.get('key')
+        data = AlumModel.objects.filter(key=key).all().values()
+        if data.__len__() > 0:
+            return result_handler(data[0])
+    except Exception as e:
+        print(e)
+    return result_handler([])
